@@ -11,16 +11,17 @@ def check_duplicate_pos(a, b):
     for j in range(len(a)):
         if a[j] == b[j]:
             return False
-            
     return True
 
 
 def check_banned_pairs(list1, list2, banned_pairs):
     for j in range(len(list1)):
-        for k in range(len(banned_pairs)):
-            if ((list1[j][0] == banned_pairs[k][0]) and (list2[j][0] == banned_pairs[k][1])) \
-                    or ((list1[j][0] == banned_pairs[k][1]) and (list2[j][0] == banned_pairs[k][0])):
-                return False
+        if list2[j][0] in banned_pairs[list1[j][0]] or list1[j][0] in banned_pairs[list2[j][0]]:
+            return False
+        # for name, banees in banned_pairs.items():
+        #     if ((list1[j][0] in banned_pairs[k][0]) and (list2[j][0] == banned_pairs[k][1])) \
+        #             or ((list1[j][0] == banned_pairs[k][1]) and (list2[j][0] == banned_pairs[k][0])):
+        #         return False
     return True
 
 
@@ -28,22 +29,26 @@ def load_file(filename):
     file = open(filename, 'r')
     reader = csv.reader(file)
     output = []
+    banned = {}
     for row in reader:
-        output.append(row)
+        output.append(row[0:2])
+        if len(row) >= 3:
+            banned[row[0]] = row[2:]
     file.close()
-    return output
+    return output, banned
 
 
 def secret_santafy(filename):
-    participants = load_file(filename)
-    print(participants[:][3])
+    participants, banned = load_file(filename)
 
-    isGood = False
-    while not isGood:
+    is_good = False
+    while not is_good:
         receivers = random.sample(participants, len(participants))
-        isGood1 = check_duplicate_pos(participants, receivers)
-        isGood2 = check_banned_pairs(participants, receivers, participants[:][3])
-        isGood = isGood1 and isGood2
+        is_good1 = check_duplicate_pos(participants, receivers)
+        is_good2 = True
+        if banned:
+            is_good2 = check_banned_pairs(participants, receivers, banned)
+        is_good = is_good1 and is_good2
 
     username = os.getenv('ACCOUNT_EMAIL')
     password = os.getenv('ACCOUNT_PSWD')
@@ -73,7 +78,7 @@ def secret_santafy(filename):
     # server.close()
 
 
-def list_csv_options():
+def choose_csv(retry=False):
     i = 0
     options = []
     for file in glob.glob("*.csv"):
@@ -81,10 +86,17 @@ def list_csv_options():
         print('{}: {}'.format(i, file))
         i += 1
     print('')
-    print('Which file would you like to use? (enter the number): ')
-
+    inp = input('Which file would you like to use? (enter the number): ')
+    j = int(inp)
+    if j in range(i):
+        return options[j]
+    elif not retry:
+        print('Please pick a number from the list next time. You silly.')
+        return choose_csv(retry=True)
+    else:
+        raise ValueError('Inputted value invalid.')
 
 
 if __name__ == '__main__':
-    list_csv_options()
-    secret_santafy('cdtpeeps.csv')
+    csv_filename = choose_csv()
+    secret_santafy(csv_filename)

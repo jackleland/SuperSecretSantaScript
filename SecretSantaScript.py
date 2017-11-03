@@ -14,14 +14,12 @@ def check_duplicate_pos(a, b):
     return True
 
 
-def check_banned_pairs(list1, list2, banned_pairs):
-    for j in range(len(list1)):
-        if list2[j][0] in banned_pairs[list1[j][0]] or list1[j][0] in banned_pairs[list2[j][0]]:
-            return False
-        # for name, banees in banned_pairs.items():
-        #     if ((list1[j][0] in banned_pairs[k][0]) and (list2[j][0] == banned_pairs[k][1])) \
-        #             or ((list1[j][0] == banned_pairs[k][1]) and (list2[j][0] == banned_pairs[k][0])):
-        #         return False
+def check_banned_pairs(givers, receivers, banned_pairs):
+    for j in range(len(givers)):
+        giver = givers[j][0]
+        receiver = receivers[j][0]
+        if giver in banned_pairs.keys() and receiver in banned_pairs[giver]:
+                return False
     return True
 
 
@@ -38,8 +36,9 @@ def load_file(filename):
     return output, banned
 
 
-def secret_santafy(filename):
+def secret_santafy(filename, is_test=False):
     participants, banned = load_file(filename)
+    receivers = []
 
     is_good = False
     while not is_good:
@@ -52,30 +51,30 @@ def secret_santafy(filename):
 
     username = os.getenv('ACCOUNT_EMAIL')
     password = os.getenv('ACCOUNT_PSWD')
-    # server = smtplib.SMTP("smtp.gmail.com", 587)
-    # server.starttls()
-    # server.login(username, password)
-
-    for i in range(len(participants)):
-        out_string = participants[i][0] + " -> " + receivers[i][0]
-        print(out_string)
-
-        msg_from = username
-        msg_to = participants[i][1]
-        msg_body = "Hi {giver}, \n\n\n" \
-                   "You've been allocated {receiver} as your present receiver. YAY! \n\n" \
-                   "Limit is &#163;10, we shall convene at some point for present distribution. \n\n\n" \
-                   "LOVE YOU \n\n" \
-                   "Santa".format(giver=participants[i][0], receiver=receivers[i][0])
-        msg_subject = 'Secret Santa Allocation!'
-        # Prepare actual message
-        message = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" % (msg_from, msg_to, msg_subject, msg_body)
-
-        # server.sendmail(msg_from, msg_to, message)
-
-        # print('successfully sent to ' + msg_to)
-
-    # server.close()
+    if not is_test:
+        print('This is not a test')
+        # server = smtplib.SMTP("smtp.gmail.com", 587)
+        # server.starttls()
+        # server.login(username, password)
+        # for i in range(len(participants)):
+        #     msg_from = username
+        #     msg_to = participants[i][1]
+        #     msg_body = "Hi {giver}, \n\n\n" \
+        #                "You've been allocated {receiver} as your present receiver. YAY! \n\n" \
+        #                "Limit is &#163;10, we shall convene at some point for present distribution. \n\n\n" \
+        #                "LOVE YOU \n\n" \
+        #                "Santa".format(giver=participants[i][0], receiver=receivers[i][0])
+        #     msg_subject = 'Secret Santa Allocation!'
+        #
+        #     # Prepare actual message
+        #     message = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" % (msg_from, msg_to, msg_subject, msg_body)
+        #     server.sendmail(msg_from, msg_to, message)
+        #     print('successfully sent to ' + msg_to)
+        # server.close()
+    else:
+        for i in range(len(participants)):
+            out_string = participants[i][0] + " -> " + receivers[i][0]
+            print(out_string)
 
 
 def choose_csv(retry=False):
@@ -99,4 +98,4 @@ def choose_csv(retry=False):
 
 if __name__ == '__main__':
     csv_filename = choose_csv()
-    secret_santafy(csv_filename)
+    secret_santafy(csv_filename, is_test=True)

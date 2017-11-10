@@ -53,7 +53,7 @@ def secret_santafy(filename, is_test=False):
     password = os.getenv('ACCOUNT_PSWD')
     if not is_test:
         print('This is not a test')
-        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server = smtplib.SMTP("smtp.gmail.com")
         server.starttls()
         server.login(username, password)
         for i in range(len(participants)):
@@ -61,15 +61,15 @@ def secret_santafy(filename, is_test=False):
             msg_to = participants[i][1]
             msg_body = "Hi {giver}, \n\n\n" \
                        "You've been allocated {receiver} as your present receiver. YAY! \n\n" \
-                       "KEEP IT SECRET!!!\n\n\n" \
-                       "Limit is " + "\xA3" + "10, we shall convene at a large house near Jodrell Bank for present distribution. \n\n\n" \
+                       "KEEP IT SECRET!!!\n\n" \
+                       "Limit is \xA310, we shall convene at a large house near Jodrell Bank for present distribution. \n\n\n" \
                        "LOVE YOU \n\n" \
                        "Santa".format(giver=participants[i][0], receiver=receivers[i][0])
             msg_subject = 'Secret Santa Allocation! (TEST)'
 
             # Prepare actual message
-            message = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" % (msg_from, "jel527@york.ac.uk", msg_subject, msg_body)
-            server.sendmail(msg_from, "jel527@york.ac.uk", message)
+            message = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" % (msg_from, msg_to, msg_subject, msg_body)
+            server.sendmail(msg_from, msg_to, message.encode("utf-8"))
             print('successfully sent to ' + msg_to)
         server.close()
     else:

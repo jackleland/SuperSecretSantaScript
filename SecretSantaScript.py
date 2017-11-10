@@ -53,24 +53,25 @@ def secret_santafy(filename, is_test=False):
     password = os.getenv('ACCOUNT_PSWD')
     if not is_test:
         print('This is not a test')
-        # server = smtplib.SMTP("smtp.gmail.com", 587)
-        # server.starttls()
-        # server.login(username, password)
-        # for i in range(len(participants)):
-        #     msg_from = username
-        #     msg_to = participants[i][1]
-        #     msg_body = "Hi {giver}, \n\n\n" \
-        #                "You've been allocated {receiver} as your present receiver. YAY! \n\n" \
-        #                "Limit is &#163;10, we shall convene at some point for present distribution. \n\n\n" \
-        #                "LOVE YOU \n\n" \
-        #                "Santa".format(giver=participants[i][0], receiver=receivers[i][0])
-        #     msg_subject = 'Secret Santa Allocation!'
-        #
-        #     # Prepare actual message
-        #     message = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" % (msg_from, msg_to, msg_subject, msg_body)
-        #     server.sendmail(msg_from, msg_to, message)
-        #     print('successfully sent to ' + msg_to)
-        # server.close()
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login(username, password)
+        for i in range(len(participants)):
+            msg_from = username
+            msg_to = participants[i][1]
+            msg_body = "Hi {giver}, \n\n\n" \
+                       "You've been allocated {receiver} as your present receiver. YAY! \n\n" \
+                       "KEEP IT SECRET!!!\n\n\n" \
+                       "Limit is " + "\xA3" + "10, we shall convene at a large house near Jodrell Bank for present distribution. \n\n\n" \
+                       "LOVE YOU \n\n" \
+                       "Santa".format(giver=participants[i][0], receiver=receivers[i][0])
+            msg_subject = 'Secret Santa Allocation! (TEST)'
+
+            # Prepare actual message
+            message = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" % (msg_from, "jel527@york.ac.uk", msg_subject, msg_body)
+            server.sendmail(msg_from, "jel527@york.ac.uk", message)
+            print('successfully sent to ' + msg_to)
+        server.close()
     else:
         for i in range(len(participants)):
             out_string = participants[i][0] + " -> " + receivers[i][0]
@@ -98,4 +99,4 @@ def choose_csv(retry=False):
 
 if __name__ == '__main__':
     csv_filename = choose_csv()
-    secret_santafy(csv_filename, is_test=True)
+    secret_santafy(csv_filename, is_test=False)

@@ -36,7 +36,7 @@ def load_file(filename):
     return output, banned
 
 
-def secret_santafy(filename, is_test=False):
+def secret_santafy(filename, is_test=False, limit=10):
     participants, banned = load_file(filename)
     receivers = []
 
@@ -62,10 +62,10 @@ def secret_santafy(filename, is_test=False):
             msg_body = "Hi {giver}, \n\n\n" \
                        "You've been allocated {receiver} as your present receiver. YAY! \n\n" \
                        "KEEP IT SECRET!!!\n\n" \
-                       "Limit is \xA310, we shall convene at a large house near Jodrell Bank for present distribution. \n\n\n" \
+                       "Price limit is \xA3{limit}, we shall convene in London sometime for present distribution. \n\n\n" \
                        "LOVE YOU \n\n" \
-                       "Santa".format(giver=participants[i][0], receiver=receivers[i][0])
-            msg_subject = 'Secret Santa Allocation! (TEST)'
+                       "Santa".format(limit=limit, giver=participants[i][0], receiver=receivers[i][0])
+            msg_subject = 'Secret Santa Allocation!'
 
             # Prepare actual message
             message = """\From: %s\nTo: %s\nSubject: %s\n\n%s""" % (msg_from, msg_to, msg_subject, msg_body)
@@ -99,4 +99,4 @@ def choose_csv(retry=False):
 
 if __name__ == '__main__':
     csv_filename = choose_csv()
-    secret_santafy(csv_filename, is_test=False)
+    secret_santafy(csv_filename, is_test=False, limit=20)

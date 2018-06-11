@@ -8,6 +8,8 @@ import os
 
 
 def check_duplicate_pos(a, b):
+    # Checks two lists a and b position-wise for whether any items are the same
+    assert len(a) == len(b)
     for j in range(len(a)):
         if a[j] == b[j]:
             return False
@@ -15,15 +17,18 @@ def check_duplicate_pos(a, b):
 
 
 def check_banned_pairs(givers, receivers, banned_pairs):
+    # Checks whether any givers have receivers from their banned pair list. Returns false is so, otherwise returns true
     for j in range(len(givers)):
         giver = givers[j][0]
         receiver = receivers[j][0]
-        if giver in banned_pairs.keys() and receiver in banned_pairs[giver]:
+        if giver in banned_pairs and receiver in banned_pairs[giver]:
                 return False
     return True
 
 
 def load_file(filename):
+    # Reads in a csv file containing all givers and their respective banned receivers. Returns a list of givers
+    # (strings) and a dictionary of givers and banned receivers.
     file = open(filename, 'r')
     reader = csv.reader(file)
     output = []
@@ -42,6 +47,7 @@ def secret_santafy(filename, is_test=False, limit=10):
 
     is_good = False
     while not is_good:
+        # Randomise list and check for duplicates and banned pairs.
         receivers = random.sample(participants, len(participants))
         is_good1 = check_duplicate_pos(participants, receivers)
         is_good2 = True
@@ -49,9 +55,11 @@ def secret_santafy(filename, is_test=False, limit=10):
             is_good2 = check_banned_pairs(participants, receivers, banned)
         is_good = is_good1 and is_good2
 
+    # Username and password retrieved from environment variables.
     username = os.getenv('ACCOUNT_EMAIL')
     password = os.getenv('ACCOUNT_PSWD')
     if not is_test:
+        # Connects to gmail and sends boilerplate email to all participants. Nothing is printed to screen.
         print('This is not a test')
         server = smtplib.SMTP("smtp.gmail.com")
         server.starttls()
@@ -73,12 +81,14 @@ def secret_santafy(filename, is_test=False, limit=10):
             print('successfully sent to ' + msg_to)
         server.close()
     else:
+        # If in test mode, print givers and receivers to screen.
         for i in range(len(participants)):
             out_string = participants[i][0] + " -> " + receivers[i][0]
             print(out_string)
 
 
 def choose_csv(retry=False):
+    # finds .csv files in current directory and asks user which one to use. Can retry once upon an invalid response.
     i = 0
     options = []
     for file in glob.glob("*.csv"):

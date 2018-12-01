@@ -70,9 +70,10 @@ def secret_santafy(filename, is_test=False, limit=10):
             msg_body = "Hi {giver}, \n\n\n" \
                        "You've been allocated {receiver} as your present receiver. YAY! \n\n" \
                        "KEEP IT SECRET!!!\n\n" \
-                       "Price limit is \xA3{limit}, we shall convene in London sometime for present distribution. \n\n\n" \
+                       "Price limit is \xA3{limit}, we shall convene at a large house near Jodrell Bank for present distribution. \n\n\n" \
                        "LOVE YOU \n\n" \
-                       "Santa".format(limit=limit, giver=participants[i][0], receiver=receivers[i][0])
+                       "Santa \n\n" \
+                       "p.s. If you have any problems contact Jack".format(limit=limit, giver=participants[i][0], receiver=receivers[i][0])
             msg_subject = 'Secret Santa Allocation!'
 
             # Prepare actual message
@@ -109,4 +110,4 @@ def choose_csv(retry=False):
 
 if __name__ == '__main__':
     csv_filename = choose_csv()
-    secret_santafy(csv_filename, is_test=False, limit=20)
+    secret_santafy(csv_filename, is_test=False, limit=10)

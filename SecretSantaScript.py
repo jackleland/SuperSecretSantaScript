@@ -58,6 +58,7 @@ def secret_santafy(filename, is_test=False, limit=10):
     # Username and password retrieved from environment variables.
     username = os.getenv('ACCOUNT_EMAIL')
     password = os.getenv('ACCOUNT_PSWD')
+    print(f'Using username {username} to send emails.')
     if not is_test:
         # Connects to gmail and sends boilerplate email to all participants. Nothing is printed to screen.
         print('This is not a test')
@@ -70,10 +71,12 @@ def secret_santafy(filename, is_test=False, limit=10):
             msg_body = "Hi {giver}, \n\n\n" \
                        "You've been allocated {receiver} as your present receiver. YAY! \n\n" \
                        "KEEP IT SECRET!!!\n\n" \
-                       "Price limit is \xA3{limit}, we shall convene at a large house near Jodrell Bank for present distribution. \n\n\n" \
+                       "Price limit is \xA3{limit}, we shall convene at a large house with a hot tub for present " \
+                       "distribution. \n\n\n" \
                        "LOVE YOU \n\n" \
                        "Santa \n\n" \
-                       "p.s. If you have any problems contact Jack".format(limit=limit, giver=participants[i][0], receiver=receivers[i][0])
+                       "p.s. If you have any problems contact Jack".format(limit=limit, giver=participants[i][0],
+                                                                           receiver=receivers[i][0])
             msg_subject = 'Secret Santa Allocation!'
 
             # Prepare actual message
@@ -111,3 +114,4 @@ def choose_csv(retry=False):
 if __name__ == '__main__':
     csv_filename = choose_csv()
     secret_santafy(csv_filename, is_test=False, limit=10)
+
